@@ -1,0 +1,108 @@
+@startuml ERDiagram
+!theme plain
+hide circle
+skinparam linetype ortho
+
+title ER-диаграмма базы данных "BookingForStudents" (3НФ)
+
+' === Пользователи ===
+entity "users" as users {
+  * id : BIGSERIAL <<PK>>
+  --
+  * email : VARCHAR(255) <<UNIQUE>>
+  * password_hash : VARCHAR(255)
+  * full_name : VARCHAR(255)
+  * role : user_role
+  * created_at : TIMESTAMPTZ
+  * updated_at : TIMESTAMPTZ
+  * is_active : BOOLEAN
+}
+
+' === Слоты ===
+entity "slots" as slots {
+  * id : BIGSERIAL <<PK>>
+  --
+  * teacher_id : BIGINT <<FK users>>
+  * title : VARCHAR(255)
+  * description : TEXT
+  * starts_at : TIMESTAMPTZ
+  * ends_at : TIMESTAMPTZ
+  * location : VARCHAR(255)
+  * format : slot_format
+  * online_url : VARCHAR(500)
+  * capacity : INTEGER
+  * is_recurring : BOOLEAN
+  * recurrence_rule : VARCHAR(255)
+  * status : slot_status
+  * created_at : TIMESTAMPTZ
+  * updated_at : TIMESTAMPTZ
+}
+
+' === Записи ===
+entity "bookings" as bookings {
+  * id : BIGSERIAL <<PK>>
+  --
+  * slot_id : BIGINT <<FK slots>>
+  * student_id : BIGINT <<FK users>>
+  * status : booking_status
+  * created_at : TIMESTAMPTZ
+  * cancelled_at : TIMESTAMPTZ
+  * cancel_reason : VARCHAR(500)
+}
+
+' === Лист ожидания ===
+entity "waitlist" as waitlist {
+  * id : BIGSERIAL <<PK>>
+  --
+  * slot_id : BIGINT <<FK slots>>
+  * student_id : BIGINT <<FK users>>
+  * position : INTEGER
+  * created_at : TIMESTAMPTZ
+  * notified_at : TIMESTAMPTZ
+  * status : waitlist_status
+}
+
+' === История уведомлений ===
+entity "notifications" as notifications {
+  * id : BIGSERIAL <<PK>>
+  --
+  * user_id : BIGINT <<FK users>>
+  * booking_id : BIGINT <<FK bookings>>
+  * type : notification_type
+  * sent_at : TIMESTAMPTZ
+  * status : notification_status
+  * error_message : TEXT
+}
+
+' === Связи ===
+users ||--o{ slots : "преподаватель создаёт"
+users ||--o{ bookings : "студент записывается"
+users ||--o{ waitlist : "студент в листе ожидания"
+users ||--o{ notifications : "получает"
+slots ||--o{ bookings : "содержит"
+slots ||--o{ waitlist : "имеет очередь"
+bookings ||--o{ notifications : "по поводу"
+
+' === Комментарии для читателя ===
+note right of users
+  Роли: student, teacher, admin.
+  Пароль хранится только в виде хеша (bcrypt/argon2).
+end note
+
+note right of slots
+  capacity — максимальное число участников.
+  is_recurring + recurrence_rule — для повторяющихся слотов.
+  status: draft / published / cancelled / completed.
+end note
+
+note right of bookings
+  Уникальность: (slot_id, student_id).
+  Статус: active / cancelled / attended.
+end note
+
+note right of waitlist
+  Очередь по position ASC — принцип FIFO.
+  При освобождении места первый переводится в bookings.
+end note
+
+@enduml
