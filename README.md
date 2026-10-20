@@ -25,10 +25,6 @@ https://github.com/Pieceofweakness/BookingForStudents/issues
 
 - [Контекстная диаграмма](docs/architecture/C4_level1.puml)
 
-Тест мердж и конфликта 
-
-- [ER-диаграмма](docs/data/er_diagram.puml)
-
 - [Список нефункциональных требований](docs/requirements/non_functional.md)
 
 - [Журнал архитектурных решений](docs/adr)
