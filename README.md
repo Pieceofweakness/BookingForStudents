@@ -25,8 +25,6 @@ https://github.com/Pieceofweakness/BookingForStudents/issues
 
 - [Контекстная диаграмма](docs/architecture/C4_level1.puml)
 
-Test 323
-frf
 - [Список нефункциональных требований](docs/requirements/non_functional.md)
 
 - [Журнал архитектурных решений](docs/adr)
