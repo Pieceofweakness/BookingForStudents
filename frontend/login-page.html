@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In | Event Slot System</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg: #f4f6fb;
+            --card: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #d1d5db;
+            --error: #dc2626;
+            --success: #16a34a;
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #eef2ff 0%, var(--bg) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            color: var(--text);
+        }
+
+        .auth-card {
+            background: var(--card);
+            width: 100%;
+            max-width: 420px;
+            border-radius: var(--radius);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+            padding: 32px;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .brand h1 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .brand p {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* Tabs for role */
+        .role-tabs {
+            display: flex;
+            background: #f3f4f6;
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 22px;
+        }
+        .role-tabs input { display: none; }
+        .role-tabs label {
+            flex: 1;
+            text-align: center;
+            padding: 10px 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--muted);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+        #role-student:checked ~ label[for="role-student"],
+        #role-teacher:checked ~ label[for="role-teacher"] {
+            background: #fff;
+            color: var(--primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+        .field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #374151;
+        }
+        .field input {
+            width: 100%;
+            padding: 11px 14px;
+            font-size: 15px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            background: #fafafa;
+        }
+        .field input:focus {
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+        .field input.invalid {
+            border-color: var(--error);
+        }
+        .field .error-msg {
+            color: var(--error);
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        .field .error-msg.visible { display: block; }
+
+        /* Password with toggle */
+        .password-wrap {
+            position: relative;
+        }
+        .password-wrap input { padding-right: 44px; }
+        .toggle-pass {
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--muted);
+            padding: 6px;
+            border-radius: 6px;
+        }
+        .toggle-pass:hover { background: #f3f4f6; }
+
+        .options-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 4px 0 20px;
+            font-size: 13px;
+        }
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--muted);
+            cursor: pointer;
+        }
+        .remember input { accent-color: var(--primary); }
+        .forgot {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .forgot:hover { text-decoration: underline; }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            background: var(--primary);
+            border: none;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.05s;
+        }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-primary:active { transform: scale(0.99); }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 22px 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .alt-auth {
+            text-align: center;
+            font-size: 13px;
+            color: var(--muted);
+        }
+        .alt-auth a {
+            color: var(--primary);
+            font-weight: 500;
+            text-decoration: none;
+        }
+        .alt-auth a:hover { text-decoration: underline; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120%);
+            padding: 12px 20px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            max-width: 90vw;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.error { background: var(--error); }
+        .toast.success { background: var(--success); }
+
+        @media (max-width: 480px) {
+            .auth-card { padding: 24px 18px; }
+            .brand h1 { font-size: 19px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+    <main class="auth-card" role="main">
+        <div class="brand">
+            <h1>Event Slot System</h1>
+            <p>Sign in to book events &amp; seminars</p>
+        </div>
+
+        <form id="loginForm" novalidate>
+            <!-- Role selection -->
+            <div class="role-tabs" role="radiogroup" aria-label="Account type">
+                <input type="radio" id="role-student" name="role" value="student" checked />
+                <label for="role-student">Student</label>
+                <input type="radio" id="role-teacher" name="role" value="teacher" />
+                <label for="role-teacher">Teacher</label>
+            </div>
+
+            <div class="field">
+                <label for="email">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="you@university.edu"
+                    autocomplete="username"
+                    required
+                />
+                <div class="error-msg" id="emailError">Please enter a valid email address.</div>
+            </div>
+
+            <div class="field">
+                <label for="password">Password</label>
+                <div class="password-wrap">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                        minlength="6"
+                    />
+                    <button type="button" class="toggle-pass" id="togglePass" aria-label="Show password">👁</button>
+                </div>
+                <div class="error-msg" id="passwordError">Password must be at least 6 characters.</div>
+            </div>
+
+            <div class="options-row">
+                <label class="remember">
+                    <input type="checkbox" id="remember" name="remember" />
+                    Remember me
+                </label>
+                <a href="#" class="forgot">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn-primary" id="submitBtn">Sign In</button>
+        </form>
+
+        <div class="divider">or</div>
+
+        <p class="alt-auth">
+            Don't have an account? <a href="#">Register</a>
+        </p>
+    </main>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const submitBtn = document.getElementById('submitBtn');
+        const toast = document.getElementById('toast');
+        const togglePass = document.getElementById('togglePass');
+
+        // Show/hide password
+        togglePass.addEventListener('click', () => {
+            const isPass = passwordInput.type === 'password';
+            passwordInput.type = isPass ? 'text' : 'password';
+            togglePass.textContent = isPass ? '🙈' : '👁';
+            togglePass.setAttribute('aria-label', isPass ? 'Hide password' : 'Show password');
+        });
+
+        function showToast(message, type = 'error') {
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            clearTimeout(showToast._t);
+            showToast._t = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        function validateEmail(value) {
+            // Simple RFC-ish pattern
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+        }
+
+        function setFieldError(input, errorEl, hasError) {
+            input.classList.toggle('invalid', hasError);
+            errorEl.classList.toggle('visible', hasError);
+        }
+
+        // Live validation
+        emailInput.addEventListener('input', () => {
+            const ok = validateEmail(emailInput.value);
+            setFieldError(emailInput, emailError, !ok && emailInput.value.length > 0);
+        });
+        passwordInput.addEventListener('input', () => {
+            const ok = passwordInput.value.length >= 6;
+            setFieldError(passwordInput, passwordError, !ok && passwordInput.value.length > 0);
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            const role = form.querySelector('input[name="role"]:checked').value;
+
+            let valid = true;
+
+            if (!validateEmail(email)) {
+                setFieldError(emailInput, emailError, true);
+                valid = false;
+            } else {
+                setFieldError(emailInput, emailError, false);
+            }
+
+            if (password.length < 6) {
+                setFieldError(passwordInput, passwordError, true);
+                valid = false;
+            } else {
+                setFieldError(passwordInput, passwordError, false);
+            }
+
+            if (!valid) {
+                showToast('Please fix the highlighted fields.', 'error');
+                return;
+            }
+
+            // Simulate API call
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing in...';
+
+            try {
+                await fakeAuthRequest({ email, password, role });
+                showToast(`Welcome back, ${role}! Redirecting...`, 'success');
+                // window.location.href = role === 'teacher' ? '/teacher/dashboard' : '/student/schedule';
+            } catch (err) {
+                showToast(err.message || 'Invalid email or password.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign In';
+            }
+        });
+
+        // Replace with real fetch to your backend
+        function fakeAuthRequest(data) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    if (data.email === 'fail@test.com') {
+                        reject(new Error('Invalid email or password.'));
+                    } else {
+                        resolve({ token: 'demo-token', user: data });
+                    }
+                }, 900);
+            });
+        }
+    </script>
+</body>
+</html>
