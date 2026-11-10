@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Вход в систему</title>
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+    <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+    <main class="auth-card" role="main">
+        <div class="brand">
+            <h1>Запись на мероприятия</h1>
+        </div>
+
+        <form id="loginForm" novalidate>
+
+            <div class="field">
+                <label for="email">Электронная почта</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="you@university.edu"
+                    autocomplete="username"
+                    required
+                />
+                <div class="error-msg" id="emailError">Пожалуйста введите корректный адрес электронной почты.</div>
+            </div>
+
+            <div class="field">
+                <label for="password">Пароль</label>
+                <div class="password-wrap">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Пароль"
+                        autocomplete="current-password"
+                        required
+                        minlength="6"
+                    />
+                    <button type="button" class="toggle-pass" id="togglePass" aria-label="Show password">👁</button>
+                </div>
+                <div class="error-msg" id="passwordError">Пароль должен содержать не менее 6 символов.</div>
+            </div>
+
+            <div class="options-row">
+                <label class="remember">
+                    <input type="checkbox" id="remember" name="remember" />
+                    Запомнить меня
+                </label>
+                <a href="#" class="forgot">Забыли пароль?</a>
+            </div>
+
+            <button type="submit" class="btn-primary" id="submitBtn">Войти</button>
+        </form>
+
+        <div class="divider">или</div>
+
+        <p class="alt-auth">
+            Еще нет аккаунта? <a href="#">Регистрация</a>
+        </p>
+    </main>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>
