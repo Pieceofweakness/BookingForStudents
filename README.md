@@ -14,7 +14,7 @@ https://github.com/Pieceofweakness/BookingForStudents/issues
 
 ## Технологический стэк:
 - Frontend - HTML, CSS, JavaScript
-- Backend - python (модульный монолит)
+- Backend - Python, Django Rest Framework (модульный монолит)
 - Database - PostgreSQL
 
 ## Ссылки в документации
@@ -28,3 +28,74 @@ https://github.com/Pieceofweakness/BookingForStudents/issues
 - [Список нефункциональных требований](docs/requirements/non_functional.md)
 
 - [Журнал архитектурных решений](docs/adr)
+
+- [Выбранный стек и настройки IDE](docs/module4/environment_setup.md)
+
+- [Результат работы линтеров](docs/module4/quality_report.md)
+
+- [Результат прогона тестов (на момент 21.11.26)](docs/module4/test_coverage_report/index.html)
+
+- [Отчет об использовании ИИ для генерации тестов](docs/module4/ai_usage_and_risks.md)
+
+## Разработка и контроль качества
+
+Для поддержания чистоты кода, единого стиля и предотвращения ошибок в проекте настроены автоматические инструменты проверки.
+
+
+### 1. Первоначальная настройка
+Выполните эти команды один раз после клонирования репозитория:
+
+```
+# Установка Python-зависимостей
+python -m pip install black isort flake8 pre-commit pytest coverage psycopg2-binary
+
+# Активация Git-хуков (теперь они будут запускаться при каждом коммите)
+python -m pre_commit install
+```
+
+### 2. Запуск проверок вручную
+Перед отправкой кода в репозиторий рекомендуется прогнать проверки локально:
+```
+# Проверка форматирования (Black)
+python -m black --check .
+
+# Автоматическое исправление форматирования
+python -m black .
+
+# Линтинг (Flake8)
+python -m flake8 .
+```
+
+### 3. Запуск тестов и проверка покрытия (Python)
+Для запуска тестов база данных должна быть запущена PostgreSQL с примененным init.sql, а так же изменены данные пользователя и пароля в test_queries.py
+```
+# Запуск тестов
+python -m pytest tests/
+
+# Запуск тестов с замером покрытия и генерацией HTML-отчета
+python -m coverage run -m pytest tests/
+python -m coverage report -m
+python -m coverage html
+```
+HTML отчет о покрытии будет доступен в папке `htmlcov/index.html`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
